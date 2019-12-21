@@ -1,0 +1,39 @@
+name: Check New Release
+
+on:
+  schedule:
+    - cron: "0 12 * * *"
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Create issue if terraform release
+      run: |
+        set -x
+        LATEST_TAG=$(git describe --abbrev=0 --tags)
+        LATEST_TF_RELEASE=$(curl -sf "https://releases.hashicorp.com/terraform/" | grep -o -E "[0-9]+\.[0-9]+\.[0-9]+)?" | uniq | head -1)
+        if [[ $LATEST_TAG != $LATEST_TF_RELEASE ]];then
+          issue_title="Support new terraform version ${LATEST_TF_RELEASE}"
+          if [[ $(curl -s \
+            --request GET \
+            --url 'https://api.github.com/repos/${{ github.repository }}/issues?state=open' \
+            --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' | \
+            jq .[].title | grep "${issue_title}" | wc -l) -ge 1 ]];then
+            echo "Issue has already created"
+            exit
+          fi
+          curl -s \
+            --request POST \
+            --url https://api.github.com/repos/${{ github.repository }}/issues \
+            --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+            --header 'content-type: application/json' \
+            --data "{
+              \"title\": \"${issue_title}\",
+              \"body\": \"This issue was automatically created by the GitHub Action workflow **${{ github.workflow }}**. \n\n New version of terraform released.\n\nVersion: ${LATEST_TF_RELEASE}\"
+              }"
+        fi
+
