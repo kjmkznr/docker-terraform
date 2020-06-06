@@ -15,7 +15,7 @@ jobs:
       run: |
         set -x
         LATEST_TAG=$(git describe --abbrev=0 --tags)
-        LATEST_TF_RELEASE=$(curl -sf "https://releases.hashicorp.com/terraform/" | grep -o -E "[0-9]+\.[0-9]+\.[0-9]+)?" | uniq | head -1)
+        LATEST_TF_RELEASE=$(curl -sf "https://releases.hashicorp.com/terraform/" | grep -o -E "[0-9]+\.[0-9]+\.[0-9]+(-[a-z]+[0-9])?"| uniq | head -1)
         if [[ $LATEST_TAG != $LATEST_TF_RELEASE ]];then
           issue_title="Support new terraform version ${LATEST_TF_RELEASE}"
           if [[ $(curl -s \
