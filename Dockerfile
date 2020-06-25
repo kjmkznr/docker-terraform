@@ -1,7 +1,7 @@
 FROM alpine
 LABEL maintainer="KOJIMA Kazunori kjm.kznr@gmail.com"
 
-RUN apk --no-cache --update add git bash bzr git mercurial subversion openssh-client ca-certificates curl
+RUN apk --no-cache --update add git bash openssh-client ca-certificates curl
 
 ENV TERRAFORM_VERSION=0.13.0-beta2
 RUN curl -LOs https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
