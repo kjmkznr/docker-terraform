@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 FROM debian AS build
 LABEL maintainer="KOJIMA Kazunori kjm.kznr@gmail.com"
-ENV TERRAFORM_VERSION=1.4.3
+ENV TERRAFORM_VERSION=1.4.4
 
 RUN <<EOF bash
 apt-get update 
